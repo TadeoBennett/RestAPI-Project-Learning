@@ -3,7 +3,8 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from db import items
-
+from schemas import ItemSchema
+from schemas import ItemUdpateSchema
 
 
 blp = Blueprint("items", __name__, description="Operations on items")
@@ -26,10 +27,11 @@ class Item(MethodView):
         except KeyError:
             abort(404, message="Item Not Found")
 
-    def put(self, item_id):
-        item_data = request.get_json()
-        if "price" not in item_data or "name" not in item_data:
-            abort(400, message="Bad Request. Ensure 'price', and 'name' are included in teh JSON payload.")
+    @blp.arguments(ItemUdpateSchema)
+    def put(self, item_data, item_id): # the validated json (item_data) goes infront of every other parameter
+        # item_data = request.get_json()
+        # if "price" not in item_data or "name" not in item_data:
+        #     abort(400, message="Bad Request. Ensure 'price', and 'name' are included in teh JSON payload.")
 
         try:
             item = items[item_id]
@@ -47,14 +49,12 @@ class ItemList(MethodView):
 
     # Create an item for a store ---------------------------
     # Expecting the data in a json payload
-    def post(self):
-        item_data = request.get_json()
-        if(
-            "price" not in item_data
-            or "store_id" not in item_data
-            or "name" not in item_data
-            ):
-            abort(400, message="Bad request. Ensure 'price', 'store_id', and 'name' are included int the json payload.")
+    @blp.arguments(ItemSchema)  #the json data is checked here and returns the validated dictionary
+    def post(self, item_data):
+        # item_data = request.get_json()   #due to to the validation with marshmallow(ItemSchema), this is not necessary
+
+        #----checking of necessary values is done through marshmallow
+
         #checking for no repeated items
         for item in items.values():
             if(
