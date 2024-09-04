@@ -9,7 +9,7 @@ class ItemSchema(Schema):
 
 
 
-class ItemUdpateSchema(Schema):
+class ItemUpdateSchema(Schema):
     name = fields.Str()
     price = fields.Float()
 
