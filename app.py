@@ -1,5 +1,6 @@
+import uuid
 from flask import Flask, request
-
+from db import items, stores
 
 app = Flask(__name__)
 
@@ -18,49 +19,53 @@ stores = [
 # Getting all stores
 @app.get("/store") #http://127.0.0.1:5000/store
 def getStores():
-    return {"stores": stores}
+    #change the data saved for stores into a list so it can be returned as json
+    return {"stores": list(stores.values())} 
 
 
 # Inserting a new store
 @app.post("/store")
 def create_store():
-    request_data = request.get_json()
-    new_store = {"name": request_data["name"], "items": []}
-    stores.append(new_store)
-    return new_store, 201
+    store_data = request.get_json()
+    store_id = uuid.uuid4().hex()
+    # **store_data unpacks the data in store_data and uses it to create the new_store
+    store = {**store_data, "id": store_id}
+    stores[store_id] = store
+    return store, 201
 
 
 # Inserting an item to a store
-@app.post("/store/<string:name>/item")   #adding a single item using parameters in url
+# Expecting the data in a json payload
+@app.post("/item")   #adding a single item using parameters in url
 def create_item(name):
-    request_data = request.get_json()
-    for store in stores:             #loop the list of saved stores
-        if store["name"] == name:    #match name of store with the saved list
-            #create the item if the store exists 
-            new_item = {"name": request_data["name"], "price": request_data["price"]}
-            store["items"].append(new_item)
-            return new_item, 201  #client receives the new item as json
-    return {"message": "Store not found"}, 404
+    item_data = request.get_json()
+    if item_data["store_id"] not in stores:
+        return {"message": "Store not found"}, 404
+    
+    item_id = uuid.uuid4.hex()
+    item = {**item_data, "id": item_id} #similar to when we created a store
+    items[item_id] = item
+
+    return item, 201
+
 
 
 # Getting the details of a store
-@app.get("/store/<string:name>")
-def get_store(name):
-    for store in stores:             #loop the list of saved stores
-        if store["name"] == name:   
-            return store, 201
-    return {"message": "Store not found"}, 404
+@app.get("/store/<string:store_id>")
+def get_store(store_id):
+    try:
+        return stores[store_id]
+    except KeyError:
+        return {"message": "Store not found"}, 404
 
 
 #Getting the items for a store
-@app.get("/store/<string:name>/items")
-def get_store_items(name):
-    for store in stores:             #loop the list of saved stores
-        if store["name"] == name:   
-            return {"items": store["items"]},201
-    return {"message": "Store not found"}, 404
-
-
+@app.get("/item/<string:item_id>")
+def get_item(item_id):
+    try:
+        return items[item_id]
+    except KeyError:
+        return {"message": "Item not found"}, 404
 
 
 
