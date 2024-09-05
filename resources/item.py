@@ -48,8 +48,8 @@ class ItemList(MethodView):
     #Get all Items ----------------------------
     @blp.response(200, ItemSchema(many=True))
     def get(self):
-        return items.values() #returns a list of items and not an object of items
-
+        return ItemModel.query.all() #returns a list of items
+        
     # Create an item for a store ---------------------------
     # Expecting the data in a json payload
     @blp.arguments(ItemSchema)  #the json data is checked here and returns the validated dictionary
