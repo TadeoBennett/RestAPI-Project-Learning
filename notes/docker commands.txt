@@ -36,7 +36,7 @@ docker compose down
 ------------------------
 
 # startup a container that maps its workdir with local files so updates are automatic[CREATES A NEW CONTAINER USING THE EXISTING IMAGE]
-docker run -dp 5005:5000  -w /app -v "$(pwd):/app" flask-smorest-api
+docker run -dp 5005:5000  -w /app -v "$(pwd):/app" <custom_image_name>
 
 
 
