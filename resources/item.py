@@ -1,6 +1,7 @@
-import uuid
+
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from flask_jwt_extended import jwt_required
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from db import db
@@ -20,6 +21,7 @@ class Item(MethodView):
         item = ItemModel.query.get_or_404(item_id)
         return item
 
+    @jwt_required() 
     def delete(self, item_id):
         item = ItemModel.query.get_or_404(item_id)
         db.session.delete(item)
@@ -27,6 +29,7 @@ class Item(MethodView):
         return {"message":"item deleted"}
 
 
+    @jwt_required() 
     @blp.arguments(ItemUpdateSchema)
     @blp.response(200, ItemSchema)
     def put(self, item_data, item_id): # the validated json (item_data) goes infront of every other parameter
@@ -52,8 +55,7 @@ class ItemList(MethodView):
     def get(self):
         return ItemModel.query.all() #returns a list of items
         
-    # Create an item for a store ---------------------------
-    # Expecting the data in a json payload
+    @jwt_required() #require that an access token be provided in the header. Note: Authorization: Bearer <access_token> 
     @blp.arguments(ItemSchema)  #the json data is checked here and returns the validated dictionary
     @blp.response(201, ItemSchema)
     def post(self, item_data):
