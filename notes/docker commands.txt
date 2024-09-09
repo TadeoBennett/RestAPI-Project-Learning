@@ -3,7 +3,7 @@
 # run flask api on local machine
 flask run
 
-# reading a txt file that with libraries to install
+# reading a txt file that with libraries to install ( done for flask_jwt_extended)
 pip install -r requirements.txt
 
 
