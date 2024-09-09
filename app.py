@@ -8,6 +8,7 @@ from flask_jwt_extended import JWTManager #do pip install -r requirements.txt
 import models
 
 from db import db
+from blocklist import BLOCKLIST
 
 from resources.item import blp as ItemBlueprint
 from resources.store import blp as StoreBlueprint
@@ -36,6 +37,20 @@ def create_app(db_url=None):
     
     app.config["JWT_SECRET_KEY"] = str(secrets.SystemRandom().getrandbits(128)) #ex: 269254914869209016615852499953798428692
     jwt = JWTManager(app)
+
+    #
+    @jwt.token_in_blocklist_loader
+    def check_if_token_in_blocklist(jwt_header, jwt_payload):
+        return jwt_payload["jti"] in BLOCKLIST
+        #returns true, if the request is terminated; if the token is in the blocklist
+
+    #this returns the error message that will be send to the client when the token is revoked(the above function returns true)
+    @jwt.revoked_token_loader
+    def revoked_token_callback(jwt_header, jwt_payload):
+        return (
+            jsonify({"description": "The token has been revoked.", "error": "token_revoked"}),
+            401,
+        )
     
     #adding more claims to the JWT. Does this when the JWT is created vs when it is called
     @jwt.additional_claims_loader
