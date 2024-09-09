@@ -59,7 +59,7 @@ class ItemList(MethodView):
     def get(self):
         return ItemModel.query.all() #returns a list of items
         
-    @jwt_required() #require that an access token be provided in the header. Note: Authorization: Bearer <access_token> 
+    @jwt_required(fresh=True) #require that an access token be provided in the header. Note: Authorization: Bearer <access_token>
     @blp.arguments(ItemSchema)  #the json data is checked here and returns the validated dictionary
     @blp.response(201, ItemSchema)
     def post(self, item_data):

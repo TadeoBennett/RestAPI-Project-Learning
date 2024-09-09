@@ -15,6 +15,7 @@ from resources.store import blp as StoreBlueprint
 from resources.tag import blp as TagBlueprint
 from resources.user import blp as UserBluePrint
 
+from datetime import timedelta
 
 
 def create_app(db_url=None):
@@ -36,6 +37,8 @@ def create_app(db_url=None):
     api = Api(app)
     
     app.config["JWT_SECRET_KEY"] = str(secrets.SystemRandom().getrandbits(128)) #ex: 269254914869209016615852499953798428692
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=5)  # Access token expiry
+
     jwt = JWTManager(app)
 
     #
@@ -44,7 +47,7 @@ def create_app(db_url=None):
         return jwt_payload["jti"] in BLOCKLIST
         #returns true, if the request is terminated; if the token is in the blocklist
 
-    #this returns the error message that will be send to the client when the token is revoked(the above function returns true)
+    #this returns the error message that will be sent to the client when the token is revoked(the above function returns true)
     @jwt.revoked_token_loader
     def revoked_token_callback(jwt_header, jwt_payload):
         return (
@@ -59,8 +62,7 @@ def create_app(db_url=None):
         if identity == 1:
             return {"is_admin": True}
         return {"is_admin": False}
-        
-        
+
     # JWT FUNCTIONS FOR ERROR HANDLING WHEN CALLING ENDPOINTS WITH JWT_REQUIRED -----------------
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_payload):

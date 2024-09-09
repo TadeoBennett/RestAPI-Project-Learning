@@ -1,7 +1,8 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from jinja2.runtime import identity
 from passlib.hash import pbkdf2_sha256 #will hash the password
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity,jwt_required, get_jwt
 
 from db import db
 from blocklist import BLOCKLIST
@@ -39,9 +40,22 @@ class UserLogin(MethodView):
         
         #check if a user was returned and the passwords are the same using .verify()
         if user and pbkdf2_sha256.verify(user_data["password"], user.password):
-            access_token = create_access_token(identity=user.id)
-            return {"access_token": access_token}
+            access_token = create_access_token(identity=user.id, fresh=True)
+            refresh_token = create_refresh_token(identity=user.id)
+            return {"access_token": access_token, "refresh_token": refresh_token}
         abort(401, message="Invalid Credentials")
+
+
+@blp.route("/refresh")
+class TokenRefresh(MethodView):
+    @jwt_required(refresh=True)
+    def post(self):
+        current_user = get_jwt_identity()  #return None if now new current user
+        new_token = create_access_token(identity=current_user, fresh=False)
+        jti = get_jwt()["jti"]   # a created non-fresh access token cannot be used again
+        BLOCKLIST.add(jti)  #add the jti to the blocklist
+        return {"access_token": new_token}
+
 
 
 @blp.route("/logout")
@@ -56,13 +70,14 @@ class UserLogout(MethodView):
 
 @blp.route("/user/<int:user_id>")
 class User(MethodView):
+    @jwt_required()
     @blp.response(200, UserSchema)
     def get(self, user_id):
         user = UserModel.query.get_or_404(user_id)
         return user
-    
+
     def delete(self, user_id):
         user = UserModel.query.get_or_404(user_id)
         db.session.delete(user)
         db.session.commit()
-        return user
+        return {"message": "User deleted"}, 200
