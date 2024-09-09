@@ -11,8 +11,9 @@ pip install -r requirements.txt
 python -m venv .venv
 
 
-# build docker image from Dockerfile(don't forget the last dot)[CREATES NEW IMAGE]
+# re-build docker image from Dockerfile(don't forget the last dot)[CREATES NEW IMAGE]
 docker build -t <custom_image_name> .
+# then start a container using volumes
 
 
 # start up a container specifying an image and the ports to use[CREATES A NEW CONTAINER USING THE EXISTING IMAGE]
@@ -35,7 +36,7 @@ docker compose down
 
 ------------------------
 
-# startup a container that maps its workdir with local files so updates are automatic[CREATES A NEW CONTAINER USING THE EXISTING IMAGE]
+# startup a container that maps its workdir with local files(volumes) so updates are automatic[CREATES A NEW CONTAINER USING THE EXISTING IMAGE]
 docker run -dp 5005:5000  -w /app -v "$(pwd):/app" <custom_image_name>
 
 
