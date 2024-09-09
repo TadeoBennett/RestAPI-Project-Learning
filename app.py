@@ -26,7 +26,7 @@ def create_app(db_url=None):
     app.config["OPENAPI_URL_PREFIX"] = "/"
     app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger-ui"
     app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
-    #for the sqlaclchemy database connection
+    #for the SQLAlchemy database connection
     app.config["SQLALCHEMY_DATABASE_URI"] = db_url or os.getenv("DATABASE_URL", "sqlite:///data.db")  #access the env variable. If not exists, default here
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["PROPAGATE_EXCEPTIONS"] = True
@@ -37,11 +37,16 @@ def create_app(db_url=None):
     app.config["JWT_SECRET_KEY"] = str(secrets.SystemRandom().getrandbits(128)) #ex: 269254914869209016615852499953798428692
     jwt = JWTManager(app)
     
+    #adding more claims to the JWT. Does this when the JWT is created vs when it is called
+    @jwt.additional_claims_loader
+    def add_claims_to_jwt(identity):
+        #HERE you look into the database and see if the user is an admin
+        if identity == 1:
+            return {"is_admin": True}
+        return {"is_admin": False}
+        
+        
     # JWT FUNCTIONS FOR ERROR HANDLING WHEN CALLING ENDPOINTS WITH JWT_REQUIRED -----------------
-    @jwt.token_in_blocklist_loader
-    def check_if_token_in_blocklist(jwt_header, jwt_payload):
-        return jwt_payload["jti"] in BLOCKLIST
-
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_payload):
         return (
@@ -92,7 +97,6 @@ def create_app(db_url=None):
         )
 
     # JWT configuration ends -------------------------------------
-    
     
     with app.app_context():
         db.create_all()
