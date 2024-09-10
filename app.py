@@ -4,6 +4,7 @@ import secrets
 from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager #do pip install -r requirements.txt
+# from flask_migrate import Migrate
 
 import models
 
@@ -32,12 +33,12 @@ def create_app(db_url=None):
     app.config["SQLALCHEMY_DATABASE_URI"] = db_url or os.getenv("DATABASE_URL", "sqlite:///data.db")  #access the env variable. If not exists, default here
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["PROPAGATE_EXCEPTIONS"] = True
-
     db.init_app(app)
+    
     api = Api(app)
     
     app.config["JWT_SECRET_KEY"] = str(secrets.SystemRandom().getrandbits(128)) #ex: 269254914869209016615852499953798428692
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=5)  # Access token expiry
+    # app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=300)  # Access token expiry
 
     jwt = JWTManager(app)
 
@@ -116,6 +117,7 @@ def create_app(db_url=None):
     # JWT configuration ends -------------------------------------
     
     with app.app_context():
+        import models
         db.create_all()
 
     api.register_blueprint(ItemBlueprint)

@@ -13,7 +13,7 @@ blp = Blueprint("items", __name__, description="Operations on items")
 
 
 
-@blp.route("/item/<string:item_id>")
+@blp.route("/item/<int:item_id>")
 class Item(MethodView):
     # Get an item ----------------------------
     @blp.response(200, ItemSchema)
@@ -54,7 +54,7 @@ class Item(MethodView):
 @blp.route("/item")
 class ItemList(MethodView):
     #Get all Items ----------------------------
-    @jwt_required()
+    # @jwt_required()
     @blp.response(200, ItemSchema(many=True))
     def get(self):
         return ItemModel.query.all() #returns a list of items
