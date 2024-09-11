@@ -52,7 +52,7 @@ docker run -dp 5005:5000  -w /app -v "$(pwd):/app" <custom_image_name>
 ```
 ### for running the Dockerfile locally
 ```
-docker run -dp 5005:5000  -w /app -v "$(pwd):/app" <custom_image_name> sh -c "flask run"
+docker run -dp 5005:5000  -w /app -v "$(pwd):/app" <custom_image_name> sh -c "flask run --host 0.0.0.0"
 ```
 ### the above code runs "flask run" instead of the "CMD" line in the DockerFile
 

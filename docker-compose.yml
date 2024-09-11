@@ -12,10 +12,12 @@ services:
   db:
     image: postgres
     environment:
-      - POSTGRES_PASSWORD=SCE28PIs4fAQTarI
-      - POSTGRES_DB=myapp
+      - POSTGRES_PASSWORD=8Q1p3fFTz0y0wpG00DVHIirr5vMkMlr7
+      - POSTGRES_DB=python_api_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 volumes:
   postgres_data:
 
