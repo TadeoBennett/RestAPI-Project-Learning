@@ -4,7 +4,7 @@ import secrets
 from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager #do pip install -r requirements.txt
-# from flask_migrate import Migrate
+from flask_migrate import Migrate
 
 import models
 
@@ -34,6 +34,7 @@ def create_app(db_url=None):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["PROPAGATE_EXCEPTIONS"] = True
     db.init_app(app)
+    migrate = Migrate(app, db)
     
     api = Api(app)
     
@@ -116,9 +117,9 @@ def create_app(db_url=None):
 
     # JWT configuration ends -------------------------------------
     
-    with app.app_context():
-        import models
-        db.create_all()
+    # with app.app_context():
+    #     import models
+    #     db.create_all()
 
     api.register_blueprint(ItemBlueprint)
     api.register_blueprint(StoreBlueprint)
