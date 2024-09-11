@@ -16,7 +16,7 @@ from resources.store import blp as StoreBlueprint
 from resources.tag import blp as TagBlueprint
 from resources.user import blp as UserBluePrint
 
-from datetime import timedelta
+# from datetime import timedelta
 
 
 def create_app(db_url=None):

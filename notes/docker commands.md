@@ -55,3 +55,6 @@ docker run -dp 5005:5000  -w /app -v "$(pwd):/app" <custom_image_name>
 docker run -dp 5005:5000  -w /app -v "$(pwd):/app" <custom_image_name> sh -c "flask run"
 ```
 ### the above code runs "flask run" instead of the "CMD" line in the DockerFile
+
+
+### Recreate the container, reinstalling the requirements
