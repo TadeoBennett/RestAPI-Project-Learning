@@ -6,3 +6,4 @@ flask-sqlalchemy
 flask-jwt-extended
 passlib #used to hash our password
 flask-migrate
+gunicorn
