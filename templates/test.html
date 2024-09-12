@@ -3,9 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Welcome to My Flask API Project!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .instructions {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-left: 5px solid #4CAF50;
+            text-align: left;
+            display: inline-block;
+            max-width: 600px;
+        }
+        .instructions h2 {
+            margin-top: 0;
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
-    Testing page is wokring nicely
+    <div class="container">
+        <h1>Welcome to My Flask API Project!</h1>
+        <p>Thank you for visiting. Here’s what you can do:</p>
+        
+        <p>1. Check out my <a href="https://github.com/TadeoBennett/RestAPI-Project-Learning" target="_blank">GitHub repository</a> to see the code for my Flask API and track my progress through the commit history.</p>
+        
+        <p>2. Visit the <a href="https://learn-rest-apis-flask-python.onrender.com/swagger-ui" target="_blank">Swagger UI documentation</a> to explore the API and understand how it works.</p>
+        
+        <div class="instructions">
+            <h2>Instructions to Access the API:</h2>
+            <p>Create your user and then log in. After logging in, copy the access token from the login response.</p>
+            <p>Use the token as the bearer token by clicking the "Authorize" button at the header of the Swagger UI page and paste the token into the input on the modal.</p>
+        </div>
+        
+        <div class="footer">
+            <p>Happy exploring!</p>
+        </div>
+    </div>
 </body>
 </html>
