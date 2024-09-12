@@ -50,3 +50,8 @@ class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     username = fields.Str(required=True)
     password = fields.Str(required=True, load_only=True)  #we cannot show the user their password
+    
+
+# take email when user is registering not logging in 
+class UserRegisterSchema(UserSchema):
+    email = fields.Email(required=True)
