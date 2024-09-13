@@ -1,5 +1,6 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from flask import current_app
 from jinja2.runtime import identity
 from passlib.hash import pbkdf2_sha256  #will hash the password
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required, get_jwt
@@ -9,6 +10,7 @@ from db import db
 from blocklist import BLOCKLIST
 from models import UserModel
 from schemas import UserSchema, UserRegisterSchema
+from tasks import send_user_registration_email
 
 import requests, os
 
@@ -47,13 +49,9 @@ class UserRegister(MethodView):
         )
         db.session.add(user)
         db.session.commit()
-        send_simple_message(
-            to=user.email,
-            subject="Successful Registration",
-            body=f"Hi {user.username}! You have successfully registered to the Stores REST API. Thank you for trying it out! "
-                 f"Use the log in/authenticate endpoint to get an access token for using the other endpoints. "
-                 f"Use the access token in the Authorization header of your requests by clicking the 'Authorize' button on the top of the swagger-ui docs page and pasting the token into the input on the displayed modal."
-        )
+        
+        current_app.queue.enqueue(send_user_registration_email, user.email, user.username)
+        
         return {"message": "User created successfully."}, 201
 
 

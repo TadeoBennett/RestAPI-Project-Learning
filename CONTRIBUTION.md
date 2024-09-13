@@ -1,42 +1,23 @@
-Connecting to your Docker Compose database with a database client
-Hello!
-
-If you are using Docker Compose and you want to connect to the database using a database client such as DBeaver, here's how to do it. It's straightforward!
 
 
-Open the port in your docker-compose.yml file
-First, in your db service, add the following two lines:
+----------------------------------------------
+## RUNNING THE REDIS BACKGROUND WORKER AND APPLICATION LOCALLY IN DOCKER 
 
-    ports:
-      - "5432:5432"
-This will make it so accessing port 5432 in your local machine will access port 5432 in your db container.
+*You will need to have migrated and upgraded the database*
 
-
-
-Re-create the image
-Then, re-create the db image with:
-
-docker compose up --build --force-recreate --no-deps db
+### build the application [CREATES AN IMAGE]
+```
+docker run -p 5000:80 <custom-image-name> .
+```
 
 
-Connect with the database client
-Finally, using your database client, create a new connection to the following URL:
-
-postgresql://postgres:postgres@localhost:5432/myapp
-Note the details used are:
-
-Database user: postgres
-
-Database password: postgres
-
-Database host: localhost
-
-Database port: 5432 (this is the port in your local machine)
-
-Database name: myapp
+### run the redis background worker(an image needs to have already been created) [CREATES A CONTAINER USING THE EXISTING IMAGE FOR THE REDIS BG WORKER]
+```
+docker run -w /app <custom-image-name> sh -c "rq worker -u <redis_url> emails"
+```
 
 
-
-If you have used different details, adjust the URL accordingly.
-
-That's it! Now you'll have a connection with a database client to your Docker Compose database!
+### run the application in a docker container(using image that was used for the background worker) [CREATES A CONTAINER FOR THE WEB APPLICATION]
+```
+docker run -p 5000:80 rest-api-recording-email
+```

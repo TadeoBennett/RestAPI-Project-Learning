@@ -58,3 +58,17 @@ docker run -dp 5005:5000  -w /app -v "$(pwd):/app" <custom_image_name> sh -c "fl
 
 
 ### Recreate the container, reinstalling the requirements
+--skipping
+
+
+
+
+### Running the redis background worker[CREATES A CONTAINER RUNNING THE REDIS QUEUE]
+```
+docker run -w /app rest-api-recording-email sh -c "rq worker -u rediss://red-crhmmc3v2p9s73bd2kl0:fxm6WVakf2RYCyOwbdswkIOSWGcsHziJ@virginia-redis.render.com:6379 emails"
+```
+
+
+
+
+

@@ -17,6 +17,9 @@ from resources.store import blp as StoreBlueprint
 from resources.tag import blp as TagBlueprint
 from resources.user import blp as UserBluePrint
 
+import redis
+from rq import Queue
+
 
 class Config:
     PROPAGATE_EXCEPTIONS = True
@@ -48,6 +51,11 @@ class Config:
 def create_app(db_url=None):
     app = Flask(__name__)
     load_dotenv()
+    
+    connection = redis.from_url(
+        os.getenv("REDIS_URL")
+    )  # Get this from Render.com or run in Docker
+    app.queue = Queue("emails", connection=connection)
     
     # app.config["PROPAGATE_EXCEPTIONS"] = True
     # app.config["API_TITLE"] = "Stores REST API"

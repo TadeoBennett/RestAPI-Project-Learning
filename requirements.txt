@@ -9,3 +9,5 @@ flask-migrate
 gunicorn
 psycopg2  #needed when running flask db upgrade from DockerFile
 requests
+rq 
+redis
